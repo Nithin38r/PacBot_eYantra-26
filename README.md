@@ -1,5 +1,6 @@
 # PacBot_eYantra-26
-Current Info: for now in the pacbot task1b is pending refer the following steps if u don't want to continue at beginning 
+Current Info: for now in the pacbot task1b is pending refer the following steps if u don't want to continue from 
+beginning 
 for access of the file "pacbot_ws" need continue just before the Mujoco :"https://drive.google.com/file/d/1PnnKGHwHTSpqOSuAKoN21u45LB3KyvEe/view?usp=sharing"
 
 STEPS:
