@@ -1,0 +1,305 @@
+Viewed task_2b_boilerplate.py:1-150
+Viewed task_2b_boilerplate.py:151-350
+Viewed task_2b_boilerplate.py:351-550
+Viewed task_2b_boilerplate.py:551-712
+Viewed test_full_run.py:1-200
+Viewed test_full_run.py:201-339
+Viewed task_2b_boilerplate.py.orig:1-100
+Viewed task_2b_boilerplate.py.orig:220-379
+Ran command: `strings ./task_2b_launch | grep -E "ghost" | head -n 30`
+Ran command: `git status`
+Ran command: `python3 test_full_run.py`
+Viewed task-923.log:1-3
+Ran command: `python3 -c "
+import subprocess, time
+p = subprocess.Popen(['python3', '/home/mohan/pacbot_ws/auto_allow.py'])
+time.sleep(2)
+poll = p.poll()
+print('Poll after 2s:', poll)
+p.terminate()
+"`
+Used tool: manage_task
+Ran command: `python3 -c "
+with open('test_full_run.py') as f:
+    c = f.read()
+
+# Add detailed logging around 20-30s
+log_code = '''
+    if int(time.time() * 10) % 2 == 0:
+        with open('trace.log', 'a') as f:
+            f.write(f'[{time.time()-S.start_sim:5.2f}s] move {S.move_idx}/{len(S.moves)} h={h} m={S.mode} pos=({S.xa:.3f},{S.ya:.3f}) c=({S.xc:.3f},{S.yc:.3f}) th={math.degrees(S.th):.1f} rem={dist_rem:.3f} front={front:.3f}\\n')
+'''
+"`
+Viewed trace.log:1-64
+Created test_perfect.py
+Ran command: `python3 test_perfect.py`
+Used tool: manage_task
+Viewed task-965.log:1-2
+Used tool: manage_task
+Used tool: manage_task
+Ran command: `ps aux | grep -E "task_2b|test_perfect" | grep -v grep`
+
+The test simulation is running in the background to evaluate our updated axle-offset navigation and collision avoidance in the official simulator. I will wait for the run to complete and verify the results.
+
+Ran command: `python3 -c "
+import json
+import maze_2b
+maze = maze_2b.Maze.official()
+import test_perfect
+moves, order = test_perfect.plan_path([(11, 3), (3, 5), (3, 9)])
+print('Order:', order)
+for i, m in enumerate(moves[:20]):
+    print(f'{i:2d}: {m[\"from\"]} -> {m[\"to\"]} h={m[\"heading\"]} ({[\"E\",\"N\",\"W\",\"S\"][m[\"heading\"]]})')
+"`
+Ran command: `strings ./task_2b_launch | grep -E "collision|ghost|pellet" | head -n 30`
+Ran command: `strings ./task_2b_launch | grep -C 3 -i "ghost" | head -n 40`
+Ran command: `python3 -c "
+with open('test_perfect.py') as f:
+    code = f.read()
+
+# In on_sensors, log every frame around collisions or continuously to sim_frames.log
+log_stmt = '''
+    with open('sim_frames.log', 'a') as f_log:
+        f_log.write(f'{d[\"t\"]:6.3f} m={S.move_idx:2d} mode={S.mode:5s} pos=({S.xa:6.3f},{S.ya:6.3f}) th={math.degrees(S.th):+6.1f} rem={dist_rem:6.3f} fl={fl:5.3f} fr={fr:5.3f} front={front:5.3f} spd={speed:4.1f} L={left:5.2f} R={right:5.2f}\\n')
+'''
+code = code.replace('client.publish(\"pacbot/wheel_vel\", json.dumps({\"left\": round(left, 3), \"right\": round(right, 3)}))', log_stmt + '    client.publish(\"pacbot/wheel_vel\", json.dumps({\"left\": round(left, 3), \"right\": round(right, 3)}))')
+with open('test_perfect.py', 'w') as f:
+    f.write(code)
+print('Updated test_perfect.py with detailed frame logging')
+"`
+Ran command: `rm -f sim_frames.log && python3 test_perfect.py`
+Viewed test_perfect.py:290-315
+Edited test_perfect.py
+Ran command: `rm -f sim_frames.log && python3 test_perfect.py`
+Viewed task-993.log:1-2
+Viewed sim_frames.log:1-50
+Viewed sim_frames.log:970-970
+Viewed sim_frames.log:900-969
+Ran command: `python3 -c "
+import re
+with open('/home/mohan/.gemini/antigravity-ide/brain/e7458616-8b01-45f0-a866-d09b48bc63b1/.system_generated/tasks/task-993.log') as f:
+    text = f.read()
+print(text)
+"`
+Ran command: `ps aux | grep -E "test_perfect|task_2b_launch" | grep -v grep`
+Ran command: `tail -n 20 sim_frames.log`
+Used tool: manage_task
+Ran command: `tail -n 20 sim_frames.log`
+Ran command: `python3 -c "
+import maze_2b
+maze = maze_2b.Maze.official()
+print('can_move((7, 3), EAST):', maze.can_move((7, 3), maze.EAST))
+print('can_move((7, 2), EAST):', maze.can_move((7, 2), maze.EAST))
+"`
+Ran command: `python3 -c "
+import test_perfect
+moves, order = test_perfect.plan_path([(5, 0), (11, 9), (1, 11)])
+for i, m in enumerate(moves):
+    print(f'{i:2d}: {m[\"from\"]} -> {m[\"to\"]} h={m[\"heading\"]} target_xy={m[\"target_xy\"]}')
+"`
+Ran command: `python3 -c "
+import maze_2b
+maze = maze_2b.Maze.official()
+print('row 6, col 2 -> col 3 (EAST):', maze.can_move((6, 2), maze.EAST))
+print('row 6, col 3: walls: N:', maze.can_move((6, 3), maze.NORTH), 'E:', maze.can_move((6, 3), maze.EAST), 'S:', maze.can_move((6, 3), maze.SOUTH), 'W:', maze.can_move((6, 3), maze.WEST))
+"`
+Ran command: `grep -E "m=1[4567] " sim_frames.log | head -n 40`
+Edited test_perfect.py
+Ran command: `python3 test_perfect.py`
+Viewed task-1024.log:1-2
+Ran command: `tail -n 10 sim_frames.log`
+Ran command: `tail -n 10 sim_frames.log`
+Ran command: `python3 -c "
+import test_perfect
+moves, order = test_perfect.plan_path([(11, 4), (11, 9), (1, 9)])
+for i in range(8):
+    m = moves[i]
+    print(f'{i}: {m[\"from\"]} -> {m[\"to\"]} h={m[\"heading\"]} target_xy={m[\"target_xy\"]}')
+"`
+Ran command: `python3 -c "
+import maze_2b
+maze = maze_2b.Maze.official()
+print('can_move((12, 4), EAST):', maze.can_move((12, 4), maze.EAST))
+"`
+Ran command: `python3 -c "
+with open('sim_frames.log') as f:
+    lines = f.readlines()
+for line in lines:
+    if 'front=0.051' in line:
+        print(line.strip())
+        break
+"`
+Used tool: manage_task
+Ran command: `ps aux | grep -E "test_perfect|task_2b_launch" | grep -v grep`
+
+The test run is completing its 80-second evaluation run. Waiting for the final result.
+
+Ran command: `python3 -c "
+with open('sim_frames.log') as f:
+    lines = f.readlines()
+# Find the last block where time starts from 0.000
+start_idx = 0
+for i, l in enumerate(lines):
+    if l.startswith(' 0.000 m= 0'):
+        start_idx = i
+run_lines = lines[start_idx:]
+for l in run_lines:
+    parts = l.strip().split()
+    t = float(parts[0])
+    if 18.0 <= t <= 19.2:
+        print(l.strip())
+"`
+Ran command: `strings ./task_2b_launch | grep -C 5 "tof" || strings ./task_2b_launch | grep -C 5 "sl"`
+Ran command: `grep "m= 5 mode=TURN" sim_frames.log | tail -n 15 || grep "m= 5 " sim_frames.log | head -n 15`
+Ran command: `python3 -c "
+with open('sim_frames.log') as f:
+    lines = f.readlines()
+start_idx = 0
+for i, l in enumerate(lines):
+    if l.startswith(' 0.000 m= 0'):
+        start_idx = i
+for l in lines[start_idx:]:
+    if 'm= 5 ' in l:
+        print(l.strip())
+        break
+"`
+Ran command: `python3 -c "
+with open('sim_frames.log') as f:
+    lines = f.readlines()
+start_idx = 0
+for i, l in enumerate(lines):
+    if l.startswith(' 0.000 m= 0'):
+        start_idx = i
+m4_lines = [l for l in lines[start_idx:] if 'm= 4 ' in l]
+for l in m4_lines[-5:]:
+    print(l.strip())
+"`
+Ran command: `python3 -c "
+with open('sim_frames.log') as f:
+    lines = f.readlines()
+start_idx = 0
+for i, l in enumerate(lines):
+    if l.startswith(' 0.000 m= 0'):
+        start_idx = i
+for l in lines[start_idx:]:
+    parts = l.strip().split()
+    t = float(parts[0])
+    if 14.80 <= t <= 18.15:
+        print(l.strip())
+"`
+Ran command: `python3 -c "
+with open('sim_frames.log') as f:
+    lines = f.readlines()
+start_idx = 0
+for i, l in enumerate(lines):
+    if l.startswith(' 0.000 m= 0'):
+        start_idx = i
+for l in lines[start_idx:]:
+    parts = l.strip().split()
+    t = float(parts[0])
+    if 14.5 <= t <= 14.86:
+        print(l.strip())
+"`
+Ran command: `python3 -c "
+with open('sim_frames.log') as f:
+    lines = f.readlines()
+start_idx = 0
+for i, l in enumerate(lines):
+    if l.startswith(' 0.000 m= 0'):
+        start_idx = i
+for l in lines[start_idx:]:
+    parts = l.strip().split()
+    t = float(parts[0])
+    if 13.5 <= t <= 14.76:
+        print(l.strip())
+"`
+Ran command: `python3 -c "
+with open('sim_frames.log') as f:
+    lines = f.readlines()
+start_idx = 0
+for i, l in enumerate(lines):
+    if l.startswith(' 0.000 m= 0'):
+        start_idx = i
+m3_lines = [l for l in lines[start_idx:] if 'm= 3 ' in l]
+for l in m3_lines[-5:]:
+    print(l.strip())
+"`
+Ran command: `python3 -c "
+with open('test_perfect.py') as f:
+    c = f.read()
+
+# Add logging at the very start of on_sensors
+c = c.replace('S.ya += dist * math.sin(S.th)', '''S.ya += dist * math.sin(S.th)
+    with open('sim_all.log', 'a') as f_all:
+        f_all.write(f'{d.get(\"t\", 0.0):6.3f} m={S.move_idx:2d} mode={S.mode:12s} blk={ghost_blocks()} pause={S.pause_frames} pos=({S.xa:6.3f},{S.ya:6.3f}) th={math.degrees(S.th):+6.1f} wz={wz:+5.2f}\\n')''')
+
+with open('test_perfect.py', 'w') as f:
+    f.write(c)
+"`
+Ran command: `rm -f sim_all.log && python3 test_perfect.py`
+Viewed test_perfect.py:168-180
+Edited test_perfect.py
+Viewed test_perfect.py:168-178
+Edited test_perfect.py
+Ran command: `rm -f sim_all.log && python3 test_perfect.py`
+Viewed task-1074.log:1-2
+Ran command: `tail -n 25 sim_all.log`
+Ran command: `tail -n 25 sim_all.log`
+Viewed task-1074.log:1-2
+Ran command: `tail -n 25 sim_all.log`
+Ran command: `python3 -c "
+import test_perfect
+moves, order = test_perfect.plan_path([(0, 3), (4, 7), (10, 10)])
+for i in range(10, 16):
+    m = moves[i]
+    print(f'{i}: {m[\"from\"]} -> {m[\"to\"]} h={m[\"heading\"]} target_th={m[\"target_angle\"]} deg={math.degrees(m[\"target_angle\"])}')
+"`
+Ran command: `python3 -c "
+import math, test_perfect
+moves, order = test_perfect.plan_path([(0, 3), (4, 7), (10, 10)])
+for i in range(8, 16):
+    m = moves[i]
+    print(f'{i}: {m[\"from\"]} -> {m[\"to\"]} h={m[\"heading\"]} target_th={m[\"target_angle\"]} deg={math.degrees(m[\"target_angle\"])}')
+"`
+Ran command: `python3 -c "
+with open('sim_all.log') as f:
+    lines = f.readlines()
+for l in lines:
+    parts = l.strip().split()
+    t = float(parts[0])
+    if 21.0 <= t <= 23.7:
+        if 'mode=TURN' in l or 'm= 8' in l or t > 23.5:
+            print(l.strip())
+"`
+Ran command: `strings ./task_2b_launch | grep -C 3 -i "geom class=\"wall\"" || strings ./task_2b_launch | grep -C 3 "default class=\"wall\""`
+Ran command: `strings ./task_2b_launch | grep -C 3 "default class=\"wall\"" || strings ./task_2b_launch | grep -C 3 "class=\"wall\""`
+Ran command: `strings ./task_2b_launch | grep -C 3 "size=.*class=\"wall\"" || strings ./task_2b_launch | grep -C 2 "name=\"wall_h"`
+Ran command: `strings ./task_2b_launch | grep -C 2 "wall_h"`
+Ran command: `strings -a -t x ./task_2b_launch | grep "wall_h"`
+Ran command: `python3 -c "
+with open('task_2b_launch', 'rb') as f:
+    f.seek(0xe0b00)
+    data = f.read(1000)
+    print(data.decode('latin1'))
+"`
+Ran command: `python3 -c "
+with open('task_2b_launch', 'rb') as f:
+    data = f.read()
+import re
+for m in re.finditer(b'wall_[hv][^\"]*\"[^\"]*size=\"([^\"]*)\"', data):
+    print(m.group(0).decode('latin1'))
+"`
+Ran command: `python3 -c "
+with open('task_2b_launch', 'rb') as f:
+    data = f.read()
+idx = 0
+while True:
+    pos = data.find(b'wall_h', idx)
+    if pos == -1: break
+    print('Found at', hex(pos), ':', data[pos-30:pos+150])
+    idx = pos + 1
+"`
+Edited test_perfect.py
+Viewed test_perfect.py:270-290
+Edited test_perfect.py
+Ran command: `python3 test_perfect.py`
